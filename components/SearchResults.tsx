@@ -15,7 +15,7 @@ export const SearchResult: FC<SearchResultProps> = ({ result }) => {
             {result.map((product, index) => {
                 return (
                     <ProductItem
-                        key={index}
+                        key={product.id}
                         product={product} />
                 )
             })}
