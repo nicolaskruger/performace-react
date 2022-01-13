@@ -1,6 +1,15 @@
 
-import { FC, memo } from "react";
-import { compareEqual } from "../utils/equal.util";
+import dynamic from "next/dynamic";
+import { FC, memo, useState } from "react";
+import { AddProductToWishListProps } from "./AddProductToWishList";
+
+const AddProductToWishList = dynamic<AddProductToWishListProps>(() => {
+    return import("./AddProductToWishList").then(mod => mod.AddProductToWishList)
+}, {
+    loading: () => (
+        <span>carregando...</span>
+    )
+})
 
 type ProductItemProps = {
     product: {
@@ -12,10 +21,20 @@ type ProductItemProps = {
 }
 
 export const ProductItemComponent: FC<ProductItemProps> = ({ product, onAddToWishList }) => {
+
+    const [isAddingToWishList, setIsAddingToWishList] = useState(false);
+
     return (
         <div>
             {product.title} - <strong>{product.price}</strong>
-            <button onClick={() => onAddToWishList(product.id)} >Add to wish List</button>
+            <button onClick={() => setIsAddingToWishList(true)} >Adicionar aos favoritos</button>
+            {
+                isAddingToWishList &&
+                <AddProductToWishList
+                    onAddToWishlist={() => onAddToWishList(product.id)}
+                    onRequestClose={() => setIsAddingToWishList(false)}
+                />
+            }
         </div>
     )
 }
