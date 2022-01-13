@@ -6,10 +6,11 @@ type SearchResultProps = {
         id: number,
         price: number,
         title: string,
-    }[]
+    }[],
+    onAddToWishList: (id: number) => Promise<void>
 }
 
-export const SearchResult: FC<SearchResultProps> = ({ result }) => {
+export const SearchResult: FC<SearchResultProps> = ({ result, onAddToWishList }) => {
 
     const totalPrice = useMemo(
         () => result.reduce((total, product) => {
@@ -23,7 +24,9 @@ export const SearchResult: FC<SearchResultProps> = ({ result }) => {
                 return (
                     <ProductItem
                         key={product.id}
-                        product={product} />
+                        product={product}
+                        onAddToWishList={onAddToWishList}
+                    />
                 )
             })}
         </div>

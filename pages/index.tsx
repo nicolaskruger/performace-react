@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useCallback, useState } from 'react'
 import { SearchResult } from '../components/SearchResults'
 import styles from '../styles/Home.module.css'
 
@@ -24,6 +24,10 @@ const Home: NextPage = () => {
     setResults(data)
   }
 
+  const addToWidhList = useCallback(async (id: number) => {
+
+  }, [])
+
   return (
     <div className={styles.container}>
       <h1>Search</h1>
@@ -37,7 +41,10 @@ const Home: NextPage = () => {
           Buscar
         </button>
 
-        <SearchResult result={results} />
+        <SearchResult
+          result={results}
+          onAddToWishList={addToWidhList}
+        />
       </form>
     </div>
   )
