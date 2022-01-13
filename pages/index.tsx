@@ -5,10 +5,22 @@ import { FormEvent, useCallback, useState } from 'react'
 import { SearchResult } from '../components/SearchResults'
 import styles from '../styles/Home.module.css'
 
+type Result = {
+  id: number,
+  price: number,
+  title: string,
+  priceFormatted: string,
+}
+
+type ResultQuery = {
+  data: Result[],
+  totalPrice: number,
+}
+
 const Home: NextPage = () => {
 
   const [search, setSearch] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<ResultQuery>({ data: [], totalPrice: 0 });
 
   const handleSearch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -17,11 +29,25 @@ const Home: NextPage = () => {
       return;
     }
 
+    const formatter = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    })
+
     const response = await fetch(`http://localhost:3333/products?q=${search}`)
 
-    const data = await response.json();
+    const data = (await response.json()) as Result[];
 
-    setResults(data)
+    const products = data.map(product => ({
+      ...product,
+      priceFormatted: formatter.format(product.price)
+    }))
+
+    const totalPrice = data.reduce((total, product) => {
+      return total + product.price;
+    }, 0)
+
+    setResults({ totalPrice, data: products })
   }
 
   const addToWidhList = useCallback(async (id: number) => {
@@ -42,7 +68,8 @@ const Home: NextPage = () => {
         </button>
 
         <SearchResult
-          result={results}
+          result={results.data}
+          totalPrice={results.totalPrice}
           onAddToWishList={addToWidhList}
         />
       </form>
